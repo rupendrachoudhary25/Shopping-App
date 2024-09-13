@@ -1,41 +1,57 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useContext } from "react";
+import { ecomContext } from "./Home";
+import { Link } from "react-router-dom";
+
 
 function App() {
-  const [products, setProducts] = useState([]);
+  const { products, loading } = useContext(ecomContext);
 
-  useEffect(() => {
-    async function fetchData() {
-      const response = await axios.get(
-        "https://strapi-store-server.onrender.com/api/products"
-      );
-      const featuredProducts = response.data.data.filter(
-        (product) => product.attributes.featured === true
-      );
-      setProducts(featuredProducts);
-      console.log(response.data.data);
-      console.log(featuredProducts);
-    }
-    fetchData();
-  }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const featuredProducts = products.filter(
+    (product) => product.attributes.featured === true
+  );
 
   return (
-    <div>
+    <>
+      <section className="homeSection">
+        <div className="miniSection">
+          <div className="text">
+            <h1>We are changing the way people shop</h1>
+            <p>
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima
+              dignissimos culpa aspernatur aliquid soluta pariatur, repudiandae
+              nihil error repellat ipsum! Ad omnis culpa id quisquam, quis
+              quaerat libero dolore fugiat.
+            </p>
+            <Link to="/products">Products</Link>
+          </div>
+        </div>
+        <div className="miniSection">
+          <div className="imagebackground">
+            <img
+              src="https://shopping-app-five-zeta.vercel.app/hero1-deae5a1f.webp"
+              alt=""
+            />
+          </div>
+        </div>
+      </section>
       <h1>Featured Products</h1>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
+      <div className="product">
+        {featuredProducts.map((product) => (
+          <div key={product.id}>
             <img
               src={product.attributes.image}
               alt={product.attributes.title}
             />
             <h2>{product.attributes.title}</h2>
-            <p>Price: {product.attributes.price}</p>
-            <p>Description: {product.attributes.description}</p>
-          </li>
+            <p>$ {product.attributes.price}</p>
+          </div>
         ))}
-      </ul>
-    </div>
+      </div>
+    </>
   );
 }
 

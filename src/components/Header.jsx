@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { MdShoppingCart } from "react-icons/md";
+import { ecomContext } from "../Home";
 
 function Header() {
+  const { cart } = useContext(ecomContext);
+
   return (
     <header>
       <h2>
@@ -16,6 +20,12 @@ function Header() {
         </li>
         <li>
           <Link to="/cart">Cart</Link>
+        </li>
+        <li>
+          <div className="cartIconParent">
+            <MdShoppingCart className="cartIcon"/>
+            {<span>{cart.length}</span>}
+          </div>
         </li>
       </ul>
     </header>
