@@ -1,0 +1,50 @@
+/* Header.css */
+
+header {
+  background-color: #f8f8f8;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+h2 {
+  margin: 0;
+}
+
+h2 a {
+  text-decoration: none;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+li {
+  margin-right: 15px;
+}
+
+li:last-child {
+  margin-right: 0;
+}
+
+a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+a:hover {
+  color: #0056b3;
+}
+
+a:active {
+  color: #003d80;
+}
