@@ -21,30 +21,41 @@ function Products() {
             <label htmlFor="select1">Search Category</label>
             <br />
             <select id="select1" name="select1">
-              <option value="option1">Option 1</option>
-              <option value="option2">Option 2</option>
-              <option value="option3">Option 3</option>
+              <option value="all" defaultValue>
+                All
+              </option>
+              <option value="table">Table</option>
+              <option value="chair">Chair</option>
+              <option value="kids">Kids</option>
+              <option value="sofas">Sofas</option>
+              <option value="beds">Beds</option>
             </select>
             <br />
             <label htmlFor="select2">Select Company</label>
             <br />
             <select id="select2" name="select2">
-              <option value="optionA">Option A</option>
-              <option value="optionB">Option B</option>
-              <option value="optionC">Option C</option>
+              <option value="all" defaultValue>
+                All
+              </option>
+              <option value="modenza">Modenza</option>
+              <option value="luxora">Luxora</option>
+              <option value="artifex">Artifex</option>
+              <option value="comfora">Comfora</option>
+              <option value="homestead">Homestead</option>
             </select>
             <br />
             <label htmlFor="select3">Sorted by</label>
             <br />
             <select id="select3" name="select3">
-              <option value="optionX">Option X</option>
-              <option value="optionY">Option Y</option>
-              <option value="optionZ">Option Z</option>
+              <option value="a-z" defaultValue>
+                a-z
+              </option>
+              <option value="z-a">z-a</option>
+              <option value="low-high">low-high</option>
+              <option value="high-low">high-low</option>
             </select>
             <br />
-            <button type="button">
-              ClearFilter
-            </button>
+            <button type="button">ClearFilter</button>
           </form>
         </div>
         <div className="products">

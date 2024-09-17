@@ -7,13 +7,18 @@ import Cart from "./pages/Cart";
 import Products from "./pages/Products";
 import ProductDetail from "./components/ProductDetail";
 
-
 export const ecomContext = createContext(null);
 
 function Home() {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  function handleRemoveFromCart(productId) {
+    setCart((prevCart) =>
+      prevCart.filter((product) => product.id !== productId)
+    );
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -33,14 +38,15 @@ function Home() {
 
   return (
     <BrowserRouter>
-      <ecomContext.Provider value={{ cart, setCart, products, loading }}>
+      <ecomContext.Provider
+        value={{ cart, setCart, products, loading, handleRemoveFromCart }}
+      >
         <Header />
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/products" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
-          {/* <Route path="/" element={<Products />} /> */}
-        <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
         </Routes>
       </ecomContext.Provider>
     </BrowserRouter>

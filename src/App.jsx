@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { ecomContext } from "./Home";
 import { Link } from "react-router-dom";
 
-
 function App() {
   const { products, loading } = useContext(ecomContext);
 
@@ -38,7 +37,7 @@ function App() {
           </div>
         </div>
       </section>
-      <h1>Featured Products</h1>
+      <h1 className="featured">Featured Products</h1>
       <div className="product">
         {featuredProducts.map((product) => (
           <div key={product.id}>
