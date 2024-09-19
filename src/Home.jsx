@@ -8,15 +8,20 @@ import Products from "./pages/Products";
 import ProductDetail from "./components/ProductDetail";
 
 export const ecomContext = createContext(null);
-
 function Home() {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("all");
+  const [company, setCompany] = useState("all");
+  const [sortOption, setSortOption] = useState("a-z");
 
-  function handleRemoveFromCart(productId) {
-    setCart((prevCart) =>
-      prevCart.filter((product) => product.id !== productId)
+  function handleRemoveFromCart(productID) {
+    setCart(
+      cart.filter((cartItem) => {
+        return cartItem.id !== productID;
+      })
     );
   }
 
@@ -39,7 +44,21 @@ function Home() {
   return (
     <BrowserRouter>
       <ecomContext.Provider
-        value={{ cart, setCart, products, loading, handleRemoveFromCart }}
+        value={{
+          cart,
+          setCart,
+          products,
+          loading,
+          handleRemoveFromCart,
+          searchTerm,
+          setSearchTerm,
+          category,
+          setCategory,
+          company,
+          setCompany,
+          sortOption,
+          setSortOption,
+        }}
       >
         <Header />
         <Routes>
