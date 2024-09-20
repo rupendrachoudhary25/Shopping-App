@@ -1,70 +1,117 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ecomContext } from "../Home";
 import { Link } from "react-router-dom";
 import Search from "../components/Search";
 
 function Products() {
-  const {
-    products,
-    loading,
-    searchTerm,
-    category,
-    company,
-    sortOption,
-  } = useContext(ecomContext);
+  const { products, loading } = useContext(ecomContext);
+  const [filteredCategoryProducts, setFilteredCategoryProducts] =
+    useState(products);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCompany, setSelectedCompany] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const selectOptions = [
+    { name: "All", label: "All", value: "All" },
+    { name: "Chairs", label: "Chairs", value: "Chairs" },
+    { name: "Tables", label: "Tables", value: "Tables" },
+    { name: "Kids", label: "Kids", value: "Kids" },
+    { name: "Sofas", label: "Sofas", value: "Sofas" },
+    { name: "Beds", label: "Beds", value: "Beds" },
+  ];
+
+  const selectCompany = [
+    { name: "All", label: "All", value: "All" },
+    { name: "Modenza", label: "Modenza", value: "Modenza" },
+    { name: "Luxora", label: "Luxora", value: "Luxora" },
+    { name: "Artifex", label: "Artifex", value: "Artifex" },
+    { name: "Comfora", label: "Comfora", value: "Comfora" },
+    { name: "Homestead", label: "Homestead", value: "Homestead" },
+  ];
+
+  useEffect(() => {
+    filterProducts(selectedCategory, selectedCompany, searchTerm);
+  }, [products, selectedCategory, selectedCompany, searchTerm]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const filteredProducts = products
-    .filter((product) => {
-      const title = product.attributes.title.toLowerCase();
-      const searchFilter = searchTerm
-        ? title.includes(searchTerm.toLowerCase())
-        : true;
+  function handleChangeCategory(e) {
+    const category = e.target.value;
+    setSelectedCategory(category);
+  }
 
-      const categoryFilter =
-        category === "all" || product.attributes.category === category;
+  function handleChangeCompany(e) {
+    const company = e.target.value;
+    setSelectedCompany(company);
+  }
 
-      const companyFilter =
-        company === "all" || product.attributes.company === company;
+  function handleSearchChange(e) {
+    const search = e.target.value;
+    setSearchTerm(search);
+  }
 
-      return searchFilter && categoryFilter && companyFilter;
-    })
-    .sort((a, b) => {
-      if (sortOption === "a-z") {
-        return a.attributes.title.localeCompare(b.attributes.title);
-      } else if (sortOption === "z-a") {
-        return b.attributes.title.localeCompare(a.attributes.title);
-      } else if (sortOption === "low-high") {
-        return a.attributes.price - b.attributes.price;
-      } else if (sortOption === "high-low") {
-        return b.attributes.price - a.attributes.price;
-      } else {
-        return 0;
-      }
-    });
+  function filterProducts(category, company, search) {
+    let filtered = products;
+
+    if (category !== "All") {
+      filtered = filtered.filter(
+        (product) => product.attributes.category === category
+      );
+    }
+
+    if (company !== "All") {
+      filtered = filtered.filter(
+        (product) => product.attributes.company === company
+      );
+    }
+
+    if (search) {
+      filtered = filtered.filter((product) =>
+        product.attributes.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredCategoryProducts(filtered);
+  }
+
+  function handleClearFilters() {
+    setSelectedCategory("All");
+    setSelectedCompany("All");
+    setSearchTerm("");
+    setFilteredCategoryProducts(products);
+  }
 
   return (
     <>
       <h1>All Products</h1>
-      <div className="productsMain">
-        <Search />
-        <div className="products">
-          {filteredProducts.map((product) => (
-            <div className="allproduct" key={product.id}>
-              <Link to={`/product/${product.id}`}>
-                <img
-                  src={product.attributes.image}
-                  alt={product.attributes.title}
-                />
-                <h2>{product.attributes.title}</h2>
-                <p>Price: {product.attributes.price}</p>
-              </Link>
-            </div>
-          ))}
-        </div>
+      <div className="searchSection">
+        <Search
+          selectedCategory={selectedCategory}
+          selectedCompany={selectedCompany}
+          searchTerm={searchTerm}
+          selectOptions={selectOptions}
+          selectCompany={selectCompany}
+          handleSearchChange={handleSearchChange}
+          handleChangeCategory={handleChangeCategory}
+          handleChangeCompany={handleChangeCompany}
+          handleClearFilters={handleClearFilters}
+        />
+      </div>
+      <div className="products">
+        {filteredCategoryProducts.map((product) => (
+          <div className="allproduct" key={product.id}>
+            <Link to={`/product/${product.id}`}>
+              <img
+                src={product.attributes.image}
+                alt={product.attributes.title}
+              />
+              <h2>{product.attributes.title}</h2>
+              <p>Price: {product.attributes.price}</p>
+            </Link>
+          </div>
+        ))}
       </div>
     </>
   );

@@ -11,21 +11,13 @@ function ProductDetail() {
   if (!product) {
     return <div>Product not found</div>;
   }
-
-  // const addToCart = () => {
-  //   // setCart([...cart, product]);
-  //   setCart([...cart, { ...product, quantity: 1 }]);
-  // };
-
-
   const addToCart = () => {
-    setCart(cart => 
-      cart.some(item => item.id === product.id) 
-        ? cart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item) 
-        : [...cart, { ...product, quantity: 1 }]
-    );
+    const isProductInCart = cart.find((item) => item.id === product.id);
+
+    if (!isProductInCart) {
+      setCart([...cart, product]);
+    }
   };
-  
 
   return (
     <div className="productDetail">

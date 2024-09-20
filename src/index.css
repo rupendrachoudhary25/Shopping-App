@@ -1,11 +1,5 @@
 /* General Styles */
-body,
-h2,
-p,
-ul,
-li,
-a,
-button {
+body, h2, p, ul, li, a, button {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
@@ -111,8 +105,7 @@ li:last-child {
   color: #666;
 }
 
-.text a,
-.text button {
+.text a, .text button {
   padding: 10px 20px;
   font-size: 1em;
   background-color: #007bff;
@@ -194,39 +187,40 @@ li:last-child {
 }
 
 /* Search/Filter Section */
+/* Search/Filter Section - Horizontal */
 .search {
-  width: 250px;
+  width: 100%;
   padding: 15px;
   background-color: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+   /* Adjust spacing between items */
+}
+.search form{
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  /* gap: 15px; */
 }
 
 .search label {
   font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
+  margin-right: 10px;
 }
 
-.search input,
-.search select {
-  width: 100%;
+.search input, .search select {
+  width: auto; /* Adjust width to fit horizontally */
   padding: 8px;
-  margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
   transition: border-color 0.3s ease;
 }
 
-.search input:focus,
-.search select:focus {
-  border-color: #007bff;
-}
-
 .search button {
-  width: 100%;
-  padding: 10px;
+  padding: 10px 20px;
   background-color: #007bff;
   color: #fff;
   border: none;
@@ -234,6 +228,11 @@ li:last-child {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  white-space: nowrap; /* Prevent button text wrapping */
+}
+
+.search input:focus, .search select:focus {
+  border-color: #007bff;
 }
 
 .search button:hover {
@@ -279,6 +278,7 @@ li:last-child {
   font-size: 18px;
   color: #777;
 }
+
 
 .productDetail {
   display: flex;
@@ -444,11 +444,11 @@ li:last-child {
 .totalAmount button:hover {
   background-color: #218838;
 }
-.counterButton {
+.counterButton{
   display: flex;
   align-items: center;
 }
-.buttons {
+.buttons{
   display: flex;
   justify-content: space-between;
   align-items: center;

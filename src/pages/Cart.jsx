@@ -1,41 +1,59 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ecomContext } from "../Home";
 
 function Cart() {
   const { cart, handleRemoveFromCart } = useContext(ecomContext);
 
-  const [quantities, setQuantities] = useState(
-    cart.reduce((acc, product) => {
-      acc[product.id] = product.quantity || 1;
-      // console.log(acc);
-      return acc;
-    }, {})
-  );
+  const initialQuantities = {};
 
-  // Function to handle increment of quantity
+  cart.forEach((product) => {
+    initialQuantities[product.id] = product.quantity || 1;
+  });
+
+  const [quantities, setQuantities] = useState(initialQuantities);
+
+  const [subtotal, setSubtotal] = useState(0);
+  const shippingCost = 10;
+  const taxRate = 0.08;
+
   function handleInc(productId) {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: prevQuantities[productId] + 1,
-    }));
+    const newQuantities = { ...quantities };
+    newQuantities[productId] = newQuantities[productId] + 1;
+    setQuantities(newQuantities);
   }
 
-  // Function to handle decrement of quantity
   function handleDec(productId) {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: Math.max(prevQuantities[productId] - 1,1),
-    }));
+    const newQuantities = {};
+    for (const id in quantities) {
+      newQuantities[id] = quantities[id];
+    }
+
+    if (newQuantities[productId] > 1) {
+      newQuantities[productId]--;
+    }
+    setQuantities(newQuantities);
   }
 
+  useEffect(() => {
+    let newSubtotal = 0;
+    for (let i = 0; i < cart.length; i++) {
+      const product = cart[i];
+      const price = Number(product.attributes.price) || 0;
+      newSubtotal += price * quantities[product.id];
+    }
+    setSubtotal(newSubtotal);
+  }, [cart, quantities]);
+
+  const taxAmount = subtotal * taxRate;
+  const orderTotal = subtotal + shippingCost + taxAmount;
 
   return (
     <>
       <h1>Shopping Cart</h1>
       <div className="cartMain">
         <div className="cartProductDetail">
-          {cart.map((product) => (
-            <div key={product.id}>
+          {cart.map((product, index) => (
+            <div key={index}>
               <div className="cartDetailLeft">
                 <img
                   src={product.attributes.image}
@@ -44,7 +62,7 @@ function Cart() {
               </div>
               <div className="cartDetailRight">
                 <h2>{product.attributes.title}</h2>
-                <p>Price: {product.attributes.price}</p>
+                <p>Price: ${Number(product.attributes.price).toFixed(2)}</p>
                 <div className="buttons">
                   <div className="counterButton">
                     <button onClick={() => handleInc(product.id)}>+</button>
@@ -55,18 +73,19 @@ function Cart() {
                     className="removeButton"
                     onClick={() => handleRemoveFromCart(product.id)}
                   >
-                    Remove
+                    remove
                   </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
         <div className="totalAmount">
-          <p>SubTotal :</p>
-          <p>Shipping :</p>
-          <p>Tax :</p>
-          <h3>Order Total</h3>
+          <p>Subtotal: ${subtotal.toFixed(2)}</p>
+          <p>Shipping: ${shippingCost.toFixed(2)}</p>
+          <p>Tax: ${taxAmount.toFixed(2)}</p>
+          <h3>Order Total: ${orderTotal.toFixed(2)}</h3>
           <button>Please LOGIN</button>
         </div>
       </div>

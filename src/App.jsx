@@ -37,7 +37,7 @@ function App() {
           </div>
         </div>
       </section>
-      <h1 className="featured">Featured Products</h1>
+      <h1>Featured Products</h1>
       <div className="product">
         {featuredProducts.map((product) => (
           <div key={product.id}>
