@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ecomContext } from "../Home";
 
 function Cart() {
@@ -86,7 +87,7 @@ function Cart() {
           <p>Shipping: ${shippingCost.toFixed(2)}</p>
           <p>Tax: ${taxAmount.toFixed(2)}</p>
           <h3>Order Total: ${orderTotal.toFixed(2)}</h3>
-          <button>Please LOGIN</button>
+          <Link to="/Login">Please LOGIN</Link>
         </div>
       </div>
     </>
