@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { getDatabase, ref, push } from 'firebase/database';
-import { initializeApp } from 'firebase/app';
+import React, { useState } from "react";
+import { getDatabase, ref, push } from "firebase/database";
+import { initializeApp } from "firebase/app";
 import { Link } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
-
-// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCEKt9gVlQq8Ooull7VK6pwkflrc1zcZjI",
   authDomain: "firbase-first25.firebaseapp.com",
@@ -12,38 +11,34 @@ const firebaseConfig = {
   storageBucket: "firbase-first25.appspot.com",
   messagingSenderId: "744341708688",
   appId: "1:744341708688:web:0798c2fa974444b1009d15",
-  databaseURL: "https://firbase-first25-default-rtdb.firebaseio.com/"
+  databaseURL: "https://firbase-first25-default-rtdb.firebaseio.com/",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const auth = getAuth(app);
 
-// Regular expressions for validation
-const usernameExp = /^[a-z0-9]{4,20}$/;
+const usernameExp = /^[a-zA-Z0-9\s]{4,20}$/;
 const phoneExp = /^[0-9]{10}$/;
 const emailExp = /^[a-zA-Z0-9\.\_\-]+\@[a-zA-Z0-9]+\.[a-zA-Z]{2,5}$/;
 const passExp = /^[a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\-\+\/\>\<]{6,20}$/;
 
 function Register() {
-  // States for form fields
-  const [creatName, setCreatName] = useState('');
-  const [creatEmail, setCreatEmail] = useState('');
-  const [creatNumber, setCreatNumber] = useState('');
-  const [creatPssword, setCreatPssword] = useState('');
-  const [creatConfirmPassword, setCreatConfirmPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
+  const [pssword, setPssword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // States for error messages
-  const [creatNameError, setCreatNameError] = useState('');
-  const [creatEmailError, setCreatEmailError] = useState('');
-  const [creatNumberError, setCreatNumberError] = useState('');
-  const [creatPasswordError, setCreatPasswordError] = useState('');
-  const [creatConfirmPasswordError, setCreatConfirmPasswordError] = useState('');
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [numberError, setNumberError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
-  // Validation functions
   const check = (value, regex, errorMsg, setError) => {
     if (regex.test(value)) {
-      setError('');
+      setError("");
       return true;
     } else {
       setError(errorMsg);
@@ -53,7 +48,7 @@ function Register() {
 
   const check2 = (value1, value2, errorMsg, setError) => {
     if (value1 === value2) {
-      setError('');
+      setError("");
       return true;
     } else {
       setError(errorMsg);
@@ -61,108 +56,140 @@ function Register() {
     }
   };
 
-  // Handle form submission
   const handleSubmitBtn = (e) => {
     e.preventDefault();
 
-    // Perform validation checks
-    const isNameValid = check(creatName, usernameExp, 'Only alphabets & numbers allowed. Range 4-20', setCreatNameError);
-    const isEmailValid = check(creatEmail, emailExp, 'Enter a valid email address', setCreatEmailError);
-    const isNumberValid = check(creatNumber, phoneExp, 'Only numbers allowed. Max 10 chars', setCreatNumberError);
-    const isPasswordValid = check(creatPssword, passExp, 'Password must be 6-20 characters and include special characters', setCreatPasswordError);
-    const isConfirmPasswordValid = check2(creatPssword, creatConfirmPassword, 'Confirm password must match password', setCreatConfirmPasswordError);
+    const isNameValid = check(
+      name,
+      usernameExp,
+      "Only alphabets & numbers allowed. Range 4-20",
+      setNameError
+    );
+    const isEmailValid = check(
+      email,
+      emailExp,
+      "Enter a valid email address",
+      setEmailError
+    );
+    const isNumberValid = check(
+      number,
+      phoneExp,
+      "Only numbers allowed. Max 10 chars",
+      setNumberError
+    );
+    const isPasswordValid = check(
+      pssword,
+      passExp,
+      "Password must be 6-20 characters and include special characters",
+      setPasswordError
+    );
+    const isConfirmPasswordValid = check2(
+      pssword,
+      confirmPassword,
+      "Confirm password must match password",
+      setConfirmPasswordError
+    );
 
-    // If all validations pass, push data to Firebase
-    if (isNameValid && isEmailValid && isNumberValid && isPasswordValid && isConfirmPasswordValid) {
-      const usersRef = ref(database, 'users');
-      push(usersRef, {
-        name: creatName,
-        email: creatEmail,
-        password: creatPssword,
-        number: creatNumber
-      })
-        .then(() => {
-          alert("Data saved successfully!");
-          setCreatName('');
-          setCreatEmail('');
-          setCreatPssword('');
-          setCreatNumber('');
-          setCreatConfirmPassword('');
+    if (
+      isNameValid &&
+      isEmailValid &&
+      isNumberValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid
+    ) {
+      createUserWithEmailAndPassword(auth, email, pssword)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          alert("User registered successfully!");
+
+          const usersRef = ref(database, "users");
+          push(usersRef, {
+            name: name,
+            email: email,
+            number: number,
+            uid: user.uid,
+          });
+
+          setName("");
+          setEmail("");
+          setPssword("");
+          setNumber("");
+          setConfirmPassword("");
         })
         .catch((error) => {
-          console.error("Error saving data: ", error);
+          console.error("Error during registration: ", error);
+          alert("Registration failed: " + error.message);
         });
     }
   };
 
   return (
     <>
-   
       <form onSubmit={handleSubmitBtn}>
-      <div>
-      <h2 className='heading1'>Create  Account</h2>
-        <label>Name:</label>
-        <input
-          type="text"
-          
-          value={creatName}
-          onChange={(e) => setCreatName(e.target.value)}
-          placeholder="Enter your name"
-        />
-        <div style={{ color: 'red' }}>{creatNameError}</div>
+        <div>
+          <h2 className="heading1">Create Account</h2>
+          <label>Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+          />
+          <div style={{ color: "red" }}>{nameError}</div>
+        </div>
+
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your Email"
+          />
+          <div style={{ color: "red" }}>{emailError}</div>
+        </div>
+
+        <div>
+          <label>Number:</label>
+          <input
+            type="number"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            placeholder="Enter your Number"
+          />
+          <div style={{ color: "red" }}>{numberError}</div>
+        </div>
+
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={pssword}
+            onChange={(e) => setPssword(e.target.value)}
+            placeholder="Enter your Password"
+          />
+          <div style={{ color: "red" }}>{passwordError}</div>
+        </div>
+
+        <div>
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm your Password"
+          />
+          <div style={{ color: "red" }}>{confirmPasswordError}</div>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+      <div className="Login">
+        <p>
+          Already a member?<Link to="/Login">Login</Link>
+        </p>
       </div>
-
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={creatEmail}
-          onChange={(e) => setCreatEmail(e.target.value)}
-          placeholder="Enter your Email"
-        />
-        <div style={{ color: 'red' }}>{creatEmailError}</div>
-      </div>
-
-      <div>
-        <label>Number:</label>
-        <input
-          type="number"
-          value={creatNumber}
-          onChange={(e) => setCreatNumber(e.target.value)}
-          placeholder="Enter your Number"
-        />
-        <div style={{ color: 'red' }}>{creatNumberError}</div>
-      </div>
-
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={creatPssword}
-          onChange={(e) => setCreatPssword(e.target.value)}
-          placeholder="Enter your Password"
-        />
-        <div style={{ color: 'red' }}>{creatPasswordError}</div>
-      </div>
-
-      <div>
-        <label>Confirm Password:</label>
-        <input
-          type="password"
-          value={creatConfirmPassword}
-          onChange={(e) => setCreatConfirmPassword(e.target.value)}
-          placeholder="Confirm your Password"
-        />
-        <div style={{ color: 'red' }}>{creatConfirmPasswordError}</div>
-      </div>
-
-      <button type="submit">Submit</button>
-    </form>
-    <div className="Login">
-      <p>Already a member?<Link to="/Login">Login</Link></p>
-    </div>
-    </>
-
+    </>    
   );
 }
 
